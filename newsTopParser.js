@@ -4,10 +4,10 @@ const fs = require("fs");
 
 let numbersOfPage = 5;
 
-let arr = [];
-let obj = {};
-
 const parse = async() => {
+    let arr = [];
+    let obj = {};
+
     const getPage = async(url) => {
         const { data } = await axios.get(url);
         return cheerio.load(data, null, false);
@@ -27,9 +27,10 @@ const parse = async() => {
         selector(".css-1i9bvdl").each((i, element) => {
             const title = selector(element).find("div.css-yvdj0q").text();
             const link = `https://www.binance.com${selector(element).find("a").attr("href")}`;
-            //const shortText = selector(element).find("div.css-15z93by").text();
-
-            obj = {title: title, date: "", link: link};
+            // const shortText = selector(element).find("div.css-15z93by").text();
+            obj = {title: title, link: link};
+            // or
+            // obj = {title: title, link: link, shortText: shortText};
             arr.push(obj);
         });
     }
@@ -50,8 +51,11 @@ const parse = async() => {
         const pageSelector = await getPage(unique[a].link);
         pageSelector("#__ExchangeHeader_DATA").each(() => {
             const scriptData = JSON.parse(pageSelector('script').get()[9].children[0].data);
-            unique[a].date = new Date(scriptData.pageData.redux.newsDetail.detail.createTime).toLocaleString();
+            unique[a].imgsrc = `https://public.bnbstatic.com${scriptData.pageData.redux.newsDetail.detail.coverPic}`;
             unique[a].fullText = scriptData.pageData.redux.newsDetail.detail.bodyText;
+            unique[a].author = scriptData.pageData.redux.newsDetail.detail.author;
+            unique[a].keywords = scriptData.pageData.redux.newsDetail.detail.keywords;
+            unique[a].date = new Date(scriptData.pageData.redux.newsDetail.detail.createTime).toLocaleString();
         });
     }
     
