@@ -2,6 +2,7 @@ const cheerio = require("cheerio");
 const axios = require("axios");
 const fs = require("fs");
 
+// set the required number of pages
 let numbersOfPage = 5;
 
 const parse = async() => {
@@ -27,9 +28,9 @@ const parse = async() => {
         selector(".css-15rktlr").each((i, element) => {
             const title = selector(element).find("div.css-b5absw").text();
             const link = `https://www.binance.com${selector(element).find("a").attr("href")}`;
+            obj = {title: title, link: link}; // comment this string if need to scrap short text of news
+            // uncomment next strings if need to scrap short text of news 
             // const shortText = selector(element).find("div.css-1tktcmi").text();
-            obj = {title: title, link: link};
-            // or
             // obj = {title: title, link: link, shortText: shortText};
             arr.push(obj);
         });
